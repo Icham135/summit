@@ -37,7 +37,7 @@ Dann <http://localhost:4321> öffnen.
 | 12 | Appeal | Ruhige Farbwelt, weiche Schatten, klare Typografie |
 | 13 | Fitts | Grosse Haupt-Buttons (56 px) |
 | 14 | Bigger Hit Areas | Pager-Punkte haben eine unsichtbar vergrösserte Trefferfläche |
-| 15 | Hick | Drei Kategorie-Vorschläge, ein empfohlener Preisplan |
+| 15 | Hick | Ein Kategorie-Vorschlag mit «Passt», Alternativen erst auf Wunsch; ein empfohlener Preisplan |
 | 16 | Miller | Drei Schritte, Beträge mit Tausendertrennung (1'487.20) |
 | 17 | Doherty | Warteliste bestätigt sofort, Speichern läuft danach |
 | 18 | Postel | E-Mail wird grosszügig angenommen (Leerzeichen, Grossbuchstaben) und sauber gespeichert |

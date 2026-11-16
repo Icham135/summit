@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Summit. Budget für die Schweiz</title>
-<meta name="description" content="Summit erfasst Karte, Apple Pay, TWINT und Online-Käufe automatisch auf deinem iPhone. Ein Tipp ordnet zu. Ohne Bankzugangsdaten.">
+<meta name="description" content="Summit sammelt Karte, Apple Pay, TWINT und Online-Käufe automatisch auf deinem iPhone und schlägt die Kategorie gleich vor. Ohne Bankzugangsdaten.">
 <meta name="theme-color" content="#2c4527">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,18 +13,14 @@
 <style>
 /* ============================================================
    Summit. Landingpage
-   Animationsprinzipien (siehe README): Squash & Stretch, Anticipation,
-   Staging, Pose to Pose, Follow-through, Slow in/out, Arcs,
-   Secondary Action, Snappy Timing, Exaggerated Feedback, 3D,
-   Appeal, Fitts, Hit Areas, Hick, Miller, Doherty, Postel,
-   Jakob, Frequency of Use.
+   Animationsprinzipien: siehe README (Tabelle 1–20)
    ============================================================ */
 :root{
   --forest-900:#1f3320; --forest-800:#2c4527; --forest-700:#3b5a33; --forest-500:#6f9a4f; --forest-300:#a9c58a;
   --paper:#f3f5f0; --paper-2:#e6ece1; --card:#ffffff; --line:rgba(21,26,20,.08);
   --ink:#141813; --ink-2:#4b5348; --ink-3:#7c8478;
-  --green:#3f9b2f; --green-soft:#e3f1dc; --teal:#2f8f7f; --amber:#eaa53a; --sky:#5aa9c9; --rose:#d9655b;
-  /* Bewegung: nie linear (Slow in & slow out), UI unter 300 ms (Snappy timing) */
+  --green:#3f9b2f; --green-deep:#2f6b2a; --green-soft:#e3f1dc; --teal:#2f8f7f; --amber:#eaa53a; --sky:#5aa9c9; --rose:#d9655b;
+  --app-top:linear-gradient(172deg,#5f9a49 0%,#438339 48%,#356f33 100%);
   --ease-out:cubic-bezier(.22,1,.36,1); --ease-in-out:cubic-bezier(.65,0,.35,1);
   --spring:cubic-bezier(.34,1.56,.64,1);
   --fast:160ms; --mid:280ms;
@@ -43,8 +39,9 @@ img,svg{display:block}
 .accent{color:var(--green)}
 .eyebrow{font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
 :focus-visible{outline:2.5px solid var(--green);outline-offset:3px;border-radius:12px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* ---------- Buttons (Fitts: gross, Hit areas: min 48px, Squash & stretch beim Drücken) ---------- */
+/* ---------- Buttons ---------- */
 .btn{position:relative;display:inline-flex;align-items:center;gap:10px;height:56px;padding:0 28px;border-radius:999px;font-weight:600;font-size:16px;transition:transform var(--fast) var(--ease-out),background var(--fast),box-shadow var(--mid) var(--ease-out);white-space:nowrap}
 .btn:active{transform:scale(.95,.92)}
 .btn-dark{background:var(--ink);color:#fff;box-shadow:0 10px 24px -10px rgba(0,0,0,.5)}
@@ -53,13 +50,11 @@ img,svg{display:block}
 .btn-ghost:hover{background:rgba(20,24,19,.05)}
 .cta-pair{display:inline-flex;align-items:center;gap:6px}
 .btn-circle{width:56px;height:56px;padding:0;justify-content:center;border-radius:50%;background:var(--ink);color:#fff}
-/* Anticipation: der Pfeil holt kurz aus, bevor er losschiesst */
-.btn-circle svg{transition:transform var(--mid) var(--ease-out)}
 .cta-pair:hover .btn-circle svg{animation:windup .5s var(--ease-out) forwards}
 @keyframes windup{0%{transform:translate(0,0)}30%{transform:translate(-4px,4px)}100%{transform:translate(4px,-4px)}}
 
-/* ---------- Hero-Rahmen (Referenz: grüner Verlauf, helle Glaskarte) ---------- */
-.hero-bg{background:radial-gradient(120% 90% at 100% 100%,#8db163 0%,transparent 55%),radial-gradient(90% 80% at 0% 0%,#22361f 0%,transparent 60%),linear-gradient(135deg,#2a4226 0%,#4d6c3b 55%,#86ab5c 100%);padding:28px 0 28px}
+/* ---------- Hero-Rahmen ---------- */
+.hero-bg{background:radial-gradient(120% 90% at 100% 100%,#8db163 0%,transparent 55%),radial-gradient(90% 80% at 0% 0%,#22361f 0%,transparent 60%),linear-gradient(135deg,#2a4226 0%,#4d6c3b 55%,#86ab5c 100%);padding:28px 0}
 .frame{position:relative;width:min(1240px,100% - 32px);margin-inline:auto;border-radius:var(--r-lg);background:radial-gradient(70% 60% at 30% 35%,#f7f9f5 0%,transparent 70%),linear-gradient(120deg,#eef2eb 0%,#e3eadf 60%,#d5e1cc 100%);box-shadow:0 40px 80px -30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.7);overflow:hidden}
 .frame::after{content:"";position:absolute;inset:0;background:radial-gradient(40% 50% at 80% 70%,rgba(255,255,255,.55),transparent 70%);pointer-events:none}
 
@@ -70,15 +65,13 @@ nav.top{position:relative;z-index:5;display:flex;align-items:center;justify-cont
 .nav-links{display:flex;gap:6px}
 .nav-links a{padding:12px 18px;border-radius:999px;font-weight:500;font-size:16px;color:var(--ink-2);transition:color var(--fast),background var(--fast)}
 .nav-links a:hover{color:var(--ink);background:rgba(20,24,19,.05)}
-.nav-cta{display:flex;align-items:center;gap:8px}
 .badge-soon{display:inline-flex;align-items:center;gap:8px;height:48px;padding:0 18px 0 8px;border-radius:999px;background:var(--ink);color:#fff;font-weight:500;font-size:15px}
 .badge-soon .ic{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center}
 
-.hero{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr 1fr;gap:24px;padding:24px clamp(20px,5vw,64px) 56px;min-height:640px}
+.hero{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr 1fr;gap:24px;padding:24px clamp(20px,5vw,64px) 56px;min-height:660px}
 .hero-copy{padding-top:36px}
 .hero h1{font-size:clamp(48px,7.2vw,98px);font-weight:800}
 .hero h1 .line{display:block}
-/* Pose to pose: das Akzentwort wechselt zwischen klaren Zuständen */
 .rotator{display:inline-grid;vertical-align:top}
 .rotator span{grid-area:1/1;color:var(--green);opacity:0;filter:blur(10px);transform:translateY(.25em);transition:opacity .5s var(--ease-out),filter .5s var(--ease-out),transform .5s var(--ease-out)}
 .rotator span.on{opacity:1;filter:blur(0);transform:none}
@@ -86,7 +79,7 @@ nav.top{position:relative;z-index:5;display:flex;align-items:center;justify-cont
 .lead{margin-top:26px;max-width:470px;font-size:clamp(17px,1.5vw,19px);color:var(--ink-2)}
 .pager{display:flex;gap:8px;align-items:center;margin:34px 0 36px}
 .pager button{width:12px;height:12px;border-radius:999px;background:rgba(20,24,19,.55);transition:width var(--mid) var(--ease-out),background var(--mid);position:relative}
-.pager button::before{content:"";position:absolute;inset:-16px -6px} /* grössere Trefferfläche */
+.pager button::before{content:"";position:absolute;inset:-16px -6px}
 .pager button.on{width:120px;background:#fff;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04)}
 .hero-note{margin-top:44px;max-width:470px;display:flex;gap:16px;align-items:flex-start;padding:22px 24px;border-radius:var(--r-md);background:linear-gradient(100deg,rgba(255,255,255,.65),rgba(169,197,138,.45));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.6)}
 .hero-note .shield{flex:none;width:44px;height:44px;border-radius:14px;background:var(--ink);color:#fff;display:grid;place-items:center}
@@ -94,57 +87,81 @@ nav.top{position:relative;z-index:5;display:flex;align-items:center;justify-cont
 .hero-note strong{display:block;color:var(--ink);font-size:17px;font-family:"Inter Tight";letter-spacing:-.01em;margin-bottom:2px}
 
 /* ---------- Phone-Mockups ---------- */
-.stage-wrap{position:relative;min-height:600px}
-.stage{position:absolute;left:50%;top:0;width:560px;height:640px;transform-origin:top center;transform:translateX(-50%) scale(var(--s,1))}
-.phone{position:absolute;width:280px;height:580px;border-radius:52px;padding:11px;background:linear-gradient(145deg,#4a3f35,#1d1915 40%,#3a3029 70%,#15120f);box-shadow:var(--shadow-2),inset 0 0 0 1.5px rgba(255,255,255,.12)}
-.phone .screen{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:#f6f8f4}
-.phone .island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:92px;height:27px;border-radius:20px;background:#000;z-index:4}
-.status{display:flex;justify-content:space-between;align-items:center;padding:16px 26px 0;font-size:13px;font-weight:600;height:44px}
+.stage-wrap{position:relative;min-height:620px}
+.stage{position:absolute;left:50%;top:0;width:560px;height:660px;transform-origin:top center;transform:translateX(-50%) scale(var(--s,1))}
+/* Deko-Kreise wie in der Referenz */
+.blob{position:absolute;border-radius:50%;background:linear-gradient(160deg,#7fbf63,#4f9a40);opacity:.9}
+.blob.b1{width:400px;height:400px;right:-30px;top:120px}
+.blob.b2{width:54px;height:54px;right:6px;top:40px;background:#6fae55}
+.phone{position:absolute;width:280px;height:580px;border-radius:52px;padding:10px;background:#fff;box-shadow:var(--shadow-2),0 0 0 1px rgba(20,30,18,.06)}
+.phone .screen{position:relative;width:100%;height:100%;border-radius:43px;overflow:hidden;background:#f2f6ef}
+.phone .island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:26px;border-radius:20px;background:#000;z-index:4}
+.status{display:flex;justify-content:space-between;align-items:center;padding:15px 26px 0;font-size:13px;font-weight:600;height:42px}
 .status .bars{display:flex;gap:5px;align-items:center}
-.phone-a{right:0;top:0;transform:rotate(1.5deg)}
-.phone-b{left:0;top:150px;width:250px;height:500px;border-radius:48px;transform:rotate(-2deg);z-index:3}
-.phone-b .screen{border-radius:38px}
-/* 3D: Tiefe statt flach (Solid drawing) */
+.phone-a{right:40px;top:0;transform:rotate(1.5deg);z-index:2}
+.phone-b{left:0;top:170px;width:244px;height:480px;border-radius:48px;transform:rotate(-2.5deg);z-index:3;background:linear-gradient(145deg,#4a3f35,#1d1915 40%,#3a3029 70%,#15120f);padding:10px}
+.phone-b .screen{border-radius:39px}
 .tilt{transition:transform .6s var(--ease-out)}
 
-/* App: Übersicht */
-.app{padding:6px 18px 18px;font-size:13px}
-.app-head{display:flex;justify-content:space-between;align-items:center;margin:4px 0 12px}
-.app-head h4{font-family:"Inter Tight";font-size:21px;letter-spacing:-.02em}
-.round{width:32px;height:32px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow-1)}
-.months{display:flex;gap:6px;margin-bottom:12px;overflow:hidden}
-.months span{padding:6px 10px;border-radius:999px;background:#fff;font-size:11px;font-weight:500;color:var(--ink-3);white-space:nowrap}
-.months span.on{background:var(--ink);color:#fff}
-.donut-card{position:relative;background:#fff;border-radius:22px;padding:14px;box-shadow:var(--shadow-1);display:grid;place-items:center}
-.donut{width:170px;height:170px;transform:rotate(-90deg)}
-.donut circle{fill:none;stroke-width:15;stroke-linecap:round;transition:stroke-dasharray .9s var(--ease-out),stroke-dashoffset .9s var(--ease-out)}
-.donut-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
-.donut-center small{display:block;font-size:10px;color:var(--ink-3)}
-.donut-center b{font-family:"Inter Tight";font-size:26px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.cats-title{margin:14px 2px 8px;font-size:10px;font-weight:600;letter-spacing:.08em;color:var(--ink-3)}
-.cat-row{display:flex;align-items:center;gap:10px;padding:9px 10px;margin-bottom:6px;border-radius:14px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:background var(--mid),transform var(--mid) var(--spring)}
-.cat-row .sw{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;font-size:13px}
-.cat-row .nm{flex:1;font-weight:500}
-.cat-row .amt{font-variant-numeric:tabular-nums;font-weight:600}
+/* App: Übersicht im Referenz-Stil (grüner Kopf, Linie, weisse Karten) */
+.ax-top{background:var(--app-top);color:#fff;padding-bottom:10px;position:relative}
+.ax-top .status{color:#fff}
+.ax-head{display:flex;justify-content:space-between;align-items:center;padding:6px 18px 0}
+.ax-head small{display:block;font-size:10px;opacity:.75;font-weight:500}
+.ax-head b{font-size:14px;font-weight:600}
+.ax-icons{display:flex;gap:14px;align-items:center}
+.ax-bell{position:relative}
+.ax-bell::after{content:"";position:absolute;top:-1px;right:-2px;width:7px;height:7px;border-radius:50%;background:#ff7a6b;border:1.5px solid #4a8a3e}
+.ax-tabs{display:flex;gap:4px;padding:12px 12px 0;font-size:11px;font-weight:600;overflow:hidden}
+.ax-tabs span{padding:6px 11px;border-radius:999px;opacity:.85;white-space:nowrap}
+.ax-tabs span.on{background:rgba(255,255,255,.2);opacity:1}
+.ax-total{padding:14px 18px 0;font-family:"Inter Tight";font-weight:700;font-size:34px;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums}
+.ax-total small{font-size:14px;font-weight:600;letter-spacing:0;opacity:.8;margin-right:4px}
+.ax-delta{display:flex;align-items:center;gap:6px;padding:7px 18px 0;font-size:11px;opacity:.9}
+.ax-delta i{width:16px;height:16px;border-radius:50%;background:#fff;color:#438339;display:grid;place-items:center;font-style:normal;font-size:10px;font-weight:800}
+.ax-chart{position:relative;height:104px;margin-top:6px}
+.ax-chart .ax-svg{width:100%;height:100%;overflow:visible}
+#axDot{position:absolute;z-index:2;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))}
+.ax-today{position:absolute;font-size:11px;font-weight:700;transform:translate(-50%,-26px);white-space:nowrap}
+.ax-dates{display:flex;justify-content:space-between;padding:4px 18px 0;font-size:10px;opacity:.85}
+.ax-body{padding:10px 12px 0}
+.ax-tools{display:flex;justify-content:space-between;align-items:center;padding:2px 6px 8px;font-size:11px;font-weight:700;color:var(--green-deep)}
+.ax-tools u{text-underline-offset:3px}
+.ax-tools .dots{display:flex;gap:4px}
+.ax-tools .dots i{width:4px;height:4px;border-radius:50%;background:#c9d6c2}
+.ax-tools .dots i.on{background:var(--green-deep)}
+.cat-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:8px;border-radius:14px;background:#fff;box-shadow:0 4px 14px -6px rgba(31,51,32,.22);font-size:13px;font-weight:600;color:var(--green-deep);transition:background var(--mid),transform var(--mid) var(--spring)}
+.cat-row .amt{font-variant-numeric:tabular-nums;color:var(--ink)}
 .cat-row.hit{background:var(--green-soft);transform:scale(1.04)}
 
 /* App: Sperrbildschirm */
 .lock{height:100%;background:radial-gradient(90% 55% at 50% 8%,#a9c58a 0%,transparent 70%),linear-gradient(180deg,#6f9a4f 0%,#3b5a33 55%,#1f3320 100%);color:#fff;text-align:center;position:relative}
-.lock .time{text-shadow:0 2px 20px rgba(0,0,0,.18)}
 .lock .date{padding-top:46px;font-size:14px;font-weight:500;opacity:.9}
-.lock .time{font-family:"Inter Tight";font-size:68px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.lock .time{font-family:"Inter Tight";font-size:66px;font-weight:600;letter-spacing:-.04em;line-height:1;text-shadow:0 2px 20px rgba(0,0,0,.18)}
 .lock .ridge{position:absolute;left:0;right:0;bottom:0;height:46%}
-.notif{position:absolute;left:10px;right:10px;top:176px;padding:12px;border-radius:20px;text-align:left;color:var(--ink);background:rgba(255,255,255,.82);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 12px 30px -10px rgba(0,0,0,.35);opacity:0;transform:translateY(-30px) scale(.96)}
+
+/* Mitteilung: EIN Vorschlag + Bestätigen (Hick: eine Entscheidung) */
+.notif{position:absolute;left:10px;right:10px;top:172px;padding:12px;border-radius:20px;text-align:left;color:var(--ink);background:rgba(255,255,255,.86);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 12px 30px -10px rgba(0,0,0,.35);opacity:0;transform:translateY(-30px) scale(.96)}
 .notif .row1{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-2)}
 .notif .appic{width:20px;height:20px;border-radius:6px;background:var(--ink);display:grid;place-items:center}
 .notif .row1 .when{margin-left:auto}
 .notif .amount{margin-top:6px;font-weight:700;font-size:14px}
-.notif .q{font-size:12px;color:var(--ink-2)}
-.notif .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:9px}
-.chip{position:relative;height:34px;padding:0 4px;white-space:nowrap;overflow:visible;text-overflow:clip;border-radius:11px;letter-spacing:-.01em;background:rgba(20,24,19,.07);font-size:11px;font-weight:600;transition:transform var(--fast) var(--ease-out),background var(--fast)}
-.chip.press{transform:scale(.9,.84)}
-.chip.done{background:var(--green);color:#fff;animation:pop .45s var(--spring)}
+.notif .sugg-line{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:var(--ink-2)}
+.sugg{display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 6px;border-radius:999px;background:var(--green-soft);color:var(--green-deep);font-weight:700;font-size:11.5px}
+.sugg::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green)}
+.acts{display:grid;grid-template-columns:1.5fr 1fr;gap:6px;margin-top:10px}
+.act{position:relative;height:36px;border-radius:12px;font-size:12px;font-weight:700;transition:transform var(--fast) var(--ease-out),background var(--fast),opacity var(--fast)}
+.act.ok{background:var(--ink);color:#fff}
+.act.alt{background:rgba(20,24,19,.07)}
+.act.press{transform:scale(.92,.84)}
+.act.done{background:var(--green);color:#fff;animation:pop .45s var(--spring)}
 @keyframes pop{0%{transform:scale(.9)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.alts{display:none;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.alts.show{display:grid}
+.alts button{height:40px;border-radius:12px;background:rgba(20,24,19,.07);font-size:12px;font-weight:600;transition:transform var(--fast) var(--ease-out),background var(--fast)}
+.alts button:hover{background:rgba(20,24,19,.12)}
+.alts button:active{transform:scale(.92,.86)}
+.alts button.done{background:var(--green);color:#fff;animation:pop .45s var(--spring)}
 .flyer{position:fixed;z-index:50;pointer-events:none;padding:6px 12px;border-radius:999px;background:var(--green);color:#fff;font-weight:700;font-size:13px;box-shadow:0 10px 24px -8px rgba(63,155,47,.7);font-variant-numeric:tabular-nums}
 .spark{position:absolute;width:6px;height:6px;border-radius:2px;pointer-events:none}
 
@@ -153,13 +170,11 @@ section{padding:clamp(80px,11vw,140px) 0}
 .sec-head{max-width:880px}
 .sec-head h2{font-size:clamp(38px,5.4vw,68px);font-weight:800;margin-top:14px}
 .sec-head p{margin-top:18px;font-size:18px;color:var(--ink-2);max-width:580px}
-/* Blur-in beim Scrollen. Frequency of use: nur einmal pro Element */
 .reveal{opacity:0;transform:translateY(24px);filter:blur(8px);transition:opacity .8s var(--ease-out),transform .8s var(--ease-out),filter .8s var(--ease-out)}
 .reveal.in{opacity:1;transform:none;filter:none}
 .word{display:inline-block;opacity:0;filter:blur(10px);transform:translateY(.3em);transition:opacity .7s var(--ease-out),filter .7s var(--ease-out),transform .7s var(--ease-out)}
 .in .word{opacity:1;filter:none;transform:none}
 
-/* Kanäle. Staging: eine Karte im Fokus, der Rest tritt zurück */
 .channels{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:56px}
 .channel{position:relative;padding:26px 24px 28px;border-radius:var(--r-md);background:#fff;box-shadow:var(--shadow-1);transition:opacity var(--mid),transform var(--mid) var(--ease-out),filter var(--mid)}
 .channels:hover .channel{opacity:.45;filter:saturate(.6)}
@@ -169,7 +184,6 @@ section{padding:clamp(80px,11vw,140px) 0}
 .channel p{margin-top:8px;color:var(--ink-2);font-size:15px}
 .channel .via{margin-top:18px;display:inline-flex;font-size:12px;font-weight:600;padding:6px 10px;border-radius:999px;background:var(--paper);color:var(--ink-2)}
 
-/* Schritte. Miller: drei Häppchen */
 .steps{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center;margin-top:56px}
 .step-list{display:grid;gap:14px}
 .step{display:flex;gap:18px;align-items:flex-start;padding:22px;border-radius:var(--r-md);background:#fff;box-shadow:var(--shadow-1);transition:transform var(--mid) var(--ease-out),box-shadow var(--mid)}
@@ -188,22 +202,20 @@ section{padding:clamp(80px,11vw,140px) 0}
 .timer-card p{color:var(--ink-2);margin-top:6px}
 .tag{display:inline-flex;margin-top:16px;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--green-soft);color:#2d6e22}
 
-/* Interaktive Demo */
 .demo{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
 .try{position:relative;padding:36px;border-radius:var(--r-lg);background:linear-gradient(150deg,#2c4527,#4d6c3b 60%,#86ab5c);box-shadow:var(--shadow-2);min-height:420px;display:grid;place-items:center;overflow:hidden}
 .try .notif{position:relative;inset:auto;width:min(360px,100%);opacity:1;transform:none;padding:16px}
 .try .notif .amount{font-size:17px}
-.try .notif .chips{gap:8px}
-.try .chip{height:48px;font-size:14px}
-.try .chip:hover{background:rgba(20,24,19,.12)}
-.try .result{position:absolute;bottom:26px;left:0;right:0;text-align:center;color:#fff;font-weight:500;opacity:0;transform:translateY(8px);transition:opacity var(--mid),transform var(--mid) var(--ease-out)}
+.try .act{height:48px;font-size:14px}
+.try .act.ok:hover{background:#000}
+.try .act.alt:hover{background:rgba(20,24,19,.12)}
+.try .result{position:absolute;bottom:26px;left:16px;right:16px;text-align:center;color:#fff;font-weight:500;opacity:0;transform:translateY(8px);transition:opacity var(--mid),transform var(--mid) var(--ease-out)}
 .try .result.show{opacity:1;transform:none}
 .learned{margin-top:28px;display:grid;gap:10px}
 .learned li{list-style:none;display:flex;gap:12px;align-items:center;font-size:16px;color:var(--ink-2)}
 .learned li b{color:var(--ink)}
 .tick{flex:none;width:28px;height:28px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center}
 
-/* Bento */
 .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:56px;perspective:1200px}
 .tile{position:relative;padding:28px;border-radius:var(--r-md);background:#fff;box-shadow:var(--shadow-1);overflow:hidden;transform-style:preserve-3d;transition:transform .5s var(--ease-out),box-shadow .5s var(--ease-out)}
 .tile:hover{box-shadow:var(--shadow-2)}
@@ -232,7 +244,6 @@ section{padding:clamp(80px,11vw,140px) 0}
 .watch span{display:block;padding:5px;border-radius:9px;background:#1f2a1d;text-align:center;font-weight:600}
 .watch span.g{background:var(--green)}
 
-/* Privatsphäre (dunkel) */
 .dark{background:radial-gradient(80% 80% at 100% 0%,#4d6c3b 0%,transparent 60%),var(--forest-900);color:#fff}
 .dark .eyebrow{color:var(--forest-300)}
 .dark .sec-head p{color:rgba(255,255,255,.7)}
@@ -242,7 +253,6 @@ section{padding:clamp(80px,11vw,140px) 0}
 .priv p{color:rgba(255,255,255,.7);margin-top:6px;font-size:15px}
 .priv .squircle{background:rgba(255,255,255,.1);box-shadow:none;width:50px;height:50px}
 
-/* Preise. Hick: eine klare Empfehlung */
 .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px;align-items:stretch}
 .plan{padding:32px 28px;border-radius:var(--r-md);background:#fff;box-shadow:var(--shadow-1);display:flex;flex-direction:column}
 .plan.best{background:var(--ink);color:#fff;transform:translateY(-12px);box-shadow:var(--shadow-2)}
@@ -259,7 +269,6 @@ section{padding:clamp(80px,11vw,140px) 0}
 .save{display:inline-flex;align-self:flex-start;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--green);color:#fff;margin-bottom:14px}
 .fine{margin-top:20px;font-size:14px;color:var(--ink-3)}
 
-/* FAQ. Jakob: vertrautes Akkordeon */
 .faq{max-width:820px;margin-top:48px}
 .faq details{border-bottom:1px solid var(--line)}
 .faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 4px;cursor:pointer;font-family:"Inter Tight";font-weight:600;font-size:20px;letter-spacing:-.015em;min-height:48px}
@@ -268,7 +277,6 @@ section{padding:clamp(80px,11vw,140px) 0}
 .faq details[open] .plus{transform:rotate(45deg)}
 .faq .ans{padding:0 4px 26px;color:var(--ink-2);font-size:16px;max-width:700px}
 
-/* Warteliste */
 .final{padding:0 0 28px}
 .final .frame{padding:clamp(56px,9vw,110px) clamp(20px,6vw,80px);text-align:center}
 .final h2{position:relative;z-index:2;font-size:clamp(42px,6.5vw,84px);font-weight:800}
@@ -289,12 +297,11 @@ footer nav{display:flex;gap:6px}
 footer nav a{padding:10px 12px;border-radius:10px}
 footer nav a:hover{color:var(--ink);background:#fff}
 
-/* ---------- Responsive ---------- */
 @media (max-width:1020px){
   .nav-links{display:none}
   .hero{grid-template-columns:1fr;min-height:0;padding-bottom:32px}
   .hero-copy{padding-top:8px}
-  .stage-wrap{min-height:calc(640px * var(--s,1))}
+  .stage-wrap{min-height:calc(660px * var(--s,1))}
   .channels{grid-template-columns:repeat(2,1fr)}
   .steps,.demo{grid-template-columns:1fr;gap:36px}
   .bento{grid-template-columns:1fr 1fr}
@@ -305,10 +312,9 @@ footer nav a:hover{color:var(--ink);background:#fff}
 @media (max-width:620px){
   .hero-bg{padding:12px 0}
   .frame{width:calc(100% - 20px);border-radius:26px}
-  nav.top{padding:18px 18px}
-  .badge-soon{height:44px;font-size:14px}
+  nav.top{padding:18px}
+  .badge-soon{height:44px;font-size:14px;padding:0 5px}
   .badge-soon span.t{display:none}
-  .badge-soon{padding:0 5px}
   .hero{padding:8px 18px 28px}
   .hero-note{margin-top:28px}
   .channels{grid-template-columns:1fr}
@@ -319,7 +325,6 @@ footer nav a:hover{color:var(--ink);background:#fff}
   .try{padding:20px}
   .cta-pair .btn-dark{padding:0 22px}
 }
-/* Rücksicht auf "Bewegung reduzieren" */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .reveal,.word{opacity:1;filter:none;transform:none}
@@ -328,7 +333,6 @@ footer nav a:hover{color:var(--ink);background:#fff}
 </head>
 <body>
 
-<!-- ===================== HERO ===================== -->
 <div class="hero-bg">
   <div class="frame">
     <nav class="top" aria-label="Hauptnavigation">
@@ -342,9 +346,7 @@ footer nav a:hover{color:var(--ink);background:#fff}
         <a href="#preise">Preise</a>
         <a href="#faq">Fragen</a>
       </div>
-      <div class="nav-cta">
-        <a href="#warteliste" class="badge-soon"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6.5A3.5 3.5 0 0 0 11.5 3h-1A3.5 3.5 0 0 0 7 6.5c0 5-2 6.5-2 6.5h14s-1.2-1-1.8-3.5"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="t">Warteliste</span></a>
-      </div>
+      <a href="#warteliste" class="badge-soon"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6.5A3.5 3.5 0 0 0 11.5 3h-1A3.5 3.5 0 0 0 7 6.5c0 5-2 6.5-2 6.5h14s-1.2-1-1.8-3.5"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><span class="t">Warteliste</span></a>
     </nav>
 
     <div class="hero">
@@ -354,8 +356,8 @@ footer nav a:hover{color:var(--ink);background:#fff}
           <span class="line">von oben</span>
           <span class="line"><span class="rotator" aria-hidden="true"><span class="on">gesehen.</span><span>sortiert.</span><span>im Griff.</span></span></span>
         </h1>
-        <p class="lead">Summit erfasst Karte, Apple Pay, TWINT und Online-Käufe automatisch auf deinem iPhone. Ein Tipp ordnet zu. Ohne Bankzugangsdaten.</p>
-        <div class="pager" role="tablist" aria-label="Schlagwort wechseln">
+        <p class="lead">Karte, Apple Pay, TWINT und Online-Käufe landen von selbst in Summit. Die Kategorie ist schon vorgeschlagen, du bestätigst nur. Ohne Bankzugangsdaten.</p>
+        <div class="pager" aria-label="Schlagwort wechseln">
           <button class="on" aria-label="gesehen"></button><button aria-label="sortiert"></button><button aria-label="im Griff"></button>
         </div>
         <div class="cta-pair">
@@ -364,41 +366,58 @@ footer nav a:hover{color:var(--ink);background:#fff}
         </div>
         <div class="hero-note">
           <span class="shield"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.7 3.1 8.3 7.5 9.5 4.4-1.2 7.5-4.8 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></span>
-          <p><strong>Deine Daten bleiben auf dem iPhone.</strong>Kein Konto, kein Bank-Login, kein Server, der deine Ausgaben sieht.</p>
+          <p><strong>Privat bleibt privat.</strong>Summit rechnet auf deinem iPhone. Kein Bank-Login, kein Konto bei uns.</p>
         </div>
       </div>
 
       <div class="stage-wrap" id="stageWrap">
         <div class="stage" id="stage">
+          <span class="blob b1" aria-hidden="true"></span><span class="blob b2" aria-hidden="true"></span>
           <!-- Telefon A: Übersicht -->
-          <div class="phone phone-a tilt" id="phoneA">
+          <div class="phone phone-a tilt" id="phoneA" aria-hidden="true">
             <div class="screen">
               <div class="island"></div>
-              <div class="status"><span>9:41</span><span class="bars"><svg width="17" height="11" viewBox="0 0 17 11"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="24" height="11" viewBox="0 0 24 11"><rect x=".5" y=".5" width="20" height="10" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="15" height="7" rx="1.6"/></svg></span></div>
-              <div class="app">
-                <div class="app-head"><h4>Summit<span class="accent">.</span></h4><span class="round"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></div>
-                <div class="months"><span>Aug.</span><span>Sept.</span><span>Okt.</span><span class="on">Nov. 26</span></div>
-                <div class="donut-card">
-                  <svg class="donut" viewBox="0 0 120 120" id="donut" aria-hidden="true"></svg>
-                  <div class="donut-center"><div><small>November</small><b id="total">1'487.20</b><small>ausgegeben</small></div></div>
+              <div class="ax-top">
+                <div class="status"><span>9:41</span><span class="bars"><svg width="17" height="11" viewBox="0 0 17 11" fill="#fff"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg><svg width="24" height="11" viewBox="0 0 24 11"><rect x=".5" y=".5" width="20" height="10" rx="3" fill="none" stroke="#fff" opacity=".5"/><rect x="2" y="2" width="15" height="7" rx="1.6" fill="#fff"/></svg></span></div>
+                <div class="ax-head">
+                  <div><small>Ausgegeben</small><b>November</b></div>
+                  <div class="ax-icons">
+                    <svg class="ax-bell" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                  </div>
                 </div>
-                <div class="cats-title">KATEGORIEN</div>
+                <div class="ax-tabs"><span class="on">Ausgaben</span><span>Budget</span><span>Abos</span><span>Projekte</span></div>
+                <div class="ax-total"><small>CHF</small><span id="total">1'487.20</span></div>
+                <div class="ax-delta"><i>↓</i><span id="delta">12 % weniger als im Oktober</span></div>
+                <div class="ax-chart" id="axChart">
+                  <svg class="ax-svg" viewBox="0 0 260 104" preserveAspectRatio="none">
+                    <defs><linearGradient id="areaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+                    <path id="axArea" fill="url(#areaG)"/>
+                    <path id="axLine" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                  </svg>
+                  <span class="ax-today" id="axTodayLbl">Heute</span>
+                  <svg id="axDot" width="22" height="22" viewBox="0 0 22 22" style="position:absolute;transform:translate(-50%,-50%)"><circle cx="11" cy="11" r="9" fill="#5f9a49" stroke="#fff" stroke-width="3"/><circle cx="11" cy="11" r="4" fill="#d6f0c8"/></svg>
+                </div>
+                <div class="ax-dates"><span>1. Nov.</span><span>6. Nov.</span><span>11. Nov.</span><span>Heute</span></div>
+              </div>
+              <div class="ax-body">
+                <div class="ax-tools"><u>Details</u><span class="dots"><i></i><i class="on"></i><i></i><i></i></span><span>⋮</span></div>
                 <div id="catList"></div>
               </div>
             </div>
           </div>
           <!-- Telefon B: Sperrbildschirm -->
-          <div class="phone phone-b tilt" id="phoneB">
+          <div class="phone phone-b tilt" id="phoneB" aria-hidden="true">
             <div class="screen lock">
               <div class="island"></div>
               <div class="date">Montag, 16. November</div>
               <div class="time">21:47</div>
-              <svg class="ridge" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true"><path d="M0 200V140l50-40 40 26 60-50 40 34 30-18 80 60v48z" fill="#2c4527" opacity=".6"/><path d="M0 200V120l40-30 30 22 50-62 34 40 26-20 46 50 34-24 40 34v70z" fill="#18281a"/><path d="M120 50l-14 18 14-4 12 10z" fill="#fff" opacity=".85"/></svg>
+              <svg class="ridge" viewBox="0 0 300 200" preserveAspectRatio="none"><path d="M0 200V140l50-40 40 26 60-50 40 34 30-18 80 60v48z" fill="#2c4527" opacity=".6"/><path d="M0 200V120l40-30 30 22 50-62 34 40 26-20 46 50 34-24 40 34v70z" fill="#18281a"/><path d="M120 50l-14 18 14-4 12 10z" fill="#fff" opacity=".85"/></svg>
               <div class="notif" id="heroNotif">
                 <div class="row1"><span class="appic"><svg width="12" height="12" viewBox="0 0 32 32"><path d="M5.5 23.5 13 11l4.2 6.4 2.8-3.9 6.5 10z" fill="#57b33f"/></svg></span><b>Summit</b><span class="when">jetzt</span></div>
                 <div class="amount" id="heroAmount">CHF 24.80 · Migros</div>
-                <div class="q">Wohin damit?</div>
-                <div class="chips" id="heroChips"></div>
+                <div class="sugg-line">Vorschlag <span class="sugg" id="heroSugg">Lebensmittel</span></div>
+                <div class="acts"><span class="act ok" id="heroOk" style="display:grid;place-items:center">Passt</span><span class="act alt" style="display:grid;place-items:center">Ändern</span></div>
               </div>
             </div>
           </div>
@@ -409,190 +428,183 @@ footer nav a:hover{color:var(--ink);background:#fff}
 </div>
 
 <main>
-<!-- ===================== KANÄLE ===================== -->
 <section id="kanaele">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="eyebrow">Ein Ort für alles</div>
-      <h2 class="split">Du zahlst vierfach. Summit sieht <span class="accent">alles.</span></h2>
-      <p>In der Schweiz verteilt sich dein Geld auf Karte, TWINT, Online-Shops und Bargeld. Summit führt alles in einer Monatszahl zusammen.</p>
+      <div class="eyebrow">Alles zusammen</div>
+      <h2 class="split">Karte, TWINT, online, bar. <span class="accent">Eine Zahl.</span></h2>
+      <p>Dein Geld fliesst über viele Wege ab. Summit zieht sie zu einem einzigen Monatsbetrag zusammen, ohne dass du etwas abtippst.</p>
     </div>
     <div class="channels">
-      <article class="channel reveal" style="transition-delay:.0s">
+      <article class="channel reveal">
         <div class="squircle" style="background:var(--ink);color:#333"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M7 15h3"/></svg></div>
         <h3>Karte &amp; Apple Pay</h3>
-        <p>Jede Zahlung am Terminal landet sofort in Summit, nicht erst Tage später im E-Banking.</p>
-        <span class="via">über die Wallet</span>
+        <p>Erscheint im Moment der Zahlung, egal welche Bank die Karte ausgibt.</p>
+        <span class="via">aus der Wallet</span>
       </article>
       <article class="channel reveal" style="transition-delay:.08s">
         <div class="squircle" style="background:var(--green);color:var(--green)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 18.5h4"/></svg></div>
         <h3>TWINT</h3>
-        <p>Geht direkt vom Konto. Summit liest den Betrag aus der Mitteilung deiner Bank-App.</p>
-        <span class="via">über Mitteilungen</span>
+        <p>Die Push-Meldung deiner Bank-App reicht. Betrag und Empfänger erkennt Summit selbst.</p>
+        <span class="via">aus Bank-Mitteilungen</span>
       </article>
       <article class="channel reveal" style="transition-delay:.16s">
         <div class="squircle" style="background:var(--teal);color:var(--teal)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg></div>
-        <h3>Online</h3>
-        <p>Käufe im Browser oder in Apps kommen an, sobald deine Bank sie meldet.</p>
-        <span class="via">über Mitteilungen</span>
+        <h3>Online-Shops</h3>
+        <p>Bestellung abgeschickt, Meldung der Bank kommt, Betrag ist drin.</p>
+        <span class="via">aus Bank-Mitteilungen</span>
       </article>
       <article class="channel reveal" style="transition-delay:.24s">
         <div class="squircle" style="background:var(--amber);color:var(--amber)"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6.5" width="19" height="11" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 10v4M18 10v4"/></svg></div>
         <h3>Bargeld</h3>
-        <p>Betrag tippen, Kategorie wählen. Fünf Sekunden, auch auf der Apple Watch.</p>
-        <span class="via">von Hand</span>
+        <p>Für den Markt und den Kiosk: Betrag eingeben, gespeichert. Geht auch an der Uhr.</p>
+        <span class="via">schnell von Hand</span>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ===================== SO GEHT'S ===================== -->
 <section id="so-gehts" style="padding-top:0">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Einrichten</div>
       <h2 class="split">In 15 Sekunden <span class="accent">startklar.</span></h2>
-      <p>Ab iOS 27 lassen sich Automationen teilen. Du fügst den fertigen Kurzbefehl hinzu, legst einen Schalter um, fertig.</p>
+      <p>Seit iOS 27 kann man Kurzbefehle samt Automation weitergeben. Wir haben ihn fertig vorbereitet, du musst ihn nur noch einschalten.</p>
     </div>
     <div class="steps">
       <div class="step-list" id="stepList">
-        <div class="step reveal"><span class="n">01</span><div><h3>App laden</h3><p>Kein Konto, keine E-Mail, kein Bank-Login.</p></div></div>
-        <div class="step reveal"><span class="n">02</span><div><h3>Kurzbefehl hinzufügen</h3><p>Ein Tipp öffnet ihn. Schalter an, Summit hört ab jetzt mit.</p></div></div>
-        <div class="step reveal"><span class="n">03</span><div><h3>Zahlen wie immer</h3><p>Karte, Apple Pay, TWINT. Summit erfasst im Hintergrund.</p></div></div>
+        <div class="step reveal"><span class="n">01</span><div><h3>Summit installieren</h3><p>Ohne Registrierung. Die App ist sofort bereit.</p></div></div>
+        <div class="step reveal"><span class="n">02</span><div><h3>Kurzbefehl aktivieren</h3><p>Antippen, hinzufügen, Schalter auf grün.</p></div></div>
+        <div class="step reveal"><span class="n">03</span><div><h3>Ganz normal bezahlen</h3><p>Ab jetzt sammelt Summit im Hintergrund.</p></div></div>
       </div>
       <div class="timer-card reveal" id="timerCard">
         <div class="ring">
           <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" stroke="#e6ece1"/><circle id="ringBar" cx="60" cy="60" r="52" stroke="url(#rg)" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#7cc35f"/><stop offset="1" stop-color="#3f9b2f"/></linearGradient></defs></svg>
           <div class="val"><span id="ringVal">0</span><small>Sekunden</small></div>
         </div>
-        <h3>Einmal einrichten.</h3>
-        <p>Danach denkst du nie wieder daran.</p>
-        <span class="tag">ab iOS 27 · ältere Versionen mit Anleitung</span>
+        <h3>Kürzer als ein Kaffee.</h3>
+        <p>Einmal eingeschaltet, läuft es von allein.</p>
+        <span class="tag">ab iOS 27 · für ältere Versionen gibt es eine Anleitung</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===================== DEMO ===================== -->
 <section style="padding-top:0">
   <div class="wrap demo">
     <div class="reveal">
       <div class="eyebrow">Probier’s aus</div>
-      <div class="sec-head"><h2 class="split">Ein Tipp. <span class="accent">Eingeordnet.</span></h2>
-      <p>Die Frage erscheint direkt auf dem Sperrbildschirm und auf der Apple Watch. Du musst die App nicht öffnen.</p></div>
+      <div class="sec-head"><h2 class="split">Vorschlag kommt. <span class="accent">Du nickst.</span></h2>
+      <p>Summit rät die Kategorie auf dem Gerät und fragt nur zur Sicherheit nach. Stimmt sie, genügt ein Tipp auf «Passt».</p></div>
       <ul class="learned">
-        <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Lernt mit:</b> Beim zweiten Mal beim selben Händler ordnet Summit still selbst zu.</span></li>
-        <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Jede Bank:</b> Die Mitteilung wird auf dem Gerät gelesen, ohne feste Formate.</span></li>
-        <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Drei Vorschläge:</b> Die wahrscheinlichsten zuerst, nie eine lange Liste.</span></li>
+        <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Wird schlauer:</b> Hast du einen Händler einmal bestätigt, fragt Summit dort nicht mehr.</span></li>
+        <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Versteht jede Bank:</b> On-Device-KI liest Meldungen, auch in neuen Formaten.</span></li>
+        <li><span class="tick"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></span><span><b>Falsch geraten?</b> «Ändern» zeigt dir die nächsten drei Möglichkeiten.</span></li>
       </ul>
     </div>
     <div class="try reveal" id="try">
-      <div class="notif">
+      <div class="notif" id="tryNotif">
         <div class="row1"><span class="appic"><svg width="12" height="12" viewBox="0 0 32 32"><path d="M5.5 23.5 13 11l4.2 6.4 2.8-3.9 6.5 10z" fill="#57b33f"/></svg></span><b>Summit</b><span class="when">jetzt</span></div>
         <div class="amount" id="tryAmount">CHF 18.50 · Café Bebek</div>
-        <div class="q">Wohin damit?</div>
-        <div class="chips" id="tryChips"></div>
+        <div class="sugg-line">Vorschlag <span class="sugg" id="trySugg">Auswärts</span></div>
+        <div class="acts" id="tryActs"><button type="button" class="act ok" id="tryOk">Passt</button><button type="button" class="act alt" id="tryAlt">Ändern</button></div>
+        <div class="alts" id="tryAlts"></div>
       </div>
-      <div class="result" id="tryResult"></div>
+      <div class="result" id="tryResult" role="status" aria-live="polite"></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== BENTO ===================== -->
 <section style="padding-top:0">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Mehr als eine Liste</div>
-      <h2 class="split">Weisst du, wo du <span class="accent">heute</span> stehen solltest?</h2>
+      <h2 class="split">Nicht nur Rückblick. <span class="accent">Ein Plan.</span></h2>
     </div>
     <div class="bento">
       <article class="tile t-budget reveal">
-        <h3>Budget mit Tagesziel</h3>
-        <p>Nicht nur, was weg ist, sondern was heute noch drin liegt.</p>
-        <div class="big-num">612.40 <span style="font-size:18px;color:var(--ink-3);letter-spacing:0;font-weight:600">noch übrig</span></div>
+        <h3>Tagesbudget</h3>
+        <p>Summit verteilt dein Monatsbudget auf die Tage. So siehst du, ob du im Soll bist.</p>
+        <div class="big-num">612.40 <span style="font-size:18px;color:var(--ink-3);letter-spacing:0;font-weight:600">verfügbar</span></div>
         <div class="bar"><i style="--w:56%"></i></div>
-        <div class="bar-meta"><span>787.60 von 1'400.00</span><span>Plan heute: 840.00</span></div>
+        <div class="bar-meta"><span>787.60 von 1'400.00</span><span>Soll heute: 840.00</span></div>
       </article>
       <article class="tile t-compare reveal">
-        <h3>Besser als letzten Monat?</h3>
-        <p>Verglichen mit demselben Tag im Vormonat.</p>
+        <h3>Monat gegen Monat</h3>
+        <p>Gleicher Stichtag, faire Rechnung: November gegen Oktober.</p>
         <div class="big-num accent">−12 %</div>
         <div class="cols"><i style="--h:62%"></i><i style="--h:78%"></i><i style="--h:55%"></i><i style="--h:84%"></i><i style="--h:70%"></i><i class="cur" style="--h:61%"></i></div>
       </article>
       <article class="tile t-proj reveal">
-        <h3>Projekte</h3>
-        <p>Ferien, Umzug, Hochzeit: Alles landet automatisch drin, quer durch alle Kategorien.</p>
+        <h3>Reise-Modus</h3>
+        <p>Ferien starten, Schalter an. Alles bis zur Heimkehr landet in einem eigenen Topf.</p>
         <span class="pill-on"><span class="switch"></span>Lissabon · CHF 1'240.80</span>
       </article>
       <article class="tile t-abo reveal">
-        <h3>Abos</h3>
-        <p>Was jeden Monat fix weggeht, auf einen Blick.</p>
+        <h3>Fixkosten</h3>
+        <p>Abos und Jahresgebühren, sauber auf den Monat heruntergerechnet.</p>
         <div class="abo-list"><div><span>Streaming</span><b>17.90</b></div><div><span>Musik</span><b>12.95</b></div><div><span>Halbtax (pro Monat)</span><b>15.00</b></div></div>
       </article>
       <article class="tile t-watch reveal">
-        <h3>Apple Watch</h3>
-        <p>Zuordnen, ohne das iPhone aus der Tasche zu holen.</p>
-        <div class="watch"><div><b>CHF 4.20</b>SBB<span class="g">Transport</span><span>Auswärts</span></div></div>
+        <h3>Am Handgelenk</h3>
+        <p>Vorschlag bestätigen, während das iPhone in der Tasche bleibt.</p>
+        <div class="watch"><div><b>CHF 4.20</b>SBB<span class="g">Passt</span><span>Ändern</span></div></div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ===================== PRIVATSPHÄRE ===================== -->
 <section class="dark">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Privatsphäre</div>
-      <h2 class="split">Deine Ausgaben gehen <span style="color:#8fd46f">niemanden</span> etwas an.</h2>
-      <p>Summit braucht keinen Zugang zu deiner Bank. Es arbeitet nur mit dem, was ohnehin auf deinem iPhone ankommt.</p>
+      <h2 class="split">Dein Geld. <span style="color:#8fd46f">Deine Sache.</span></h2>
+      <p>Summit liest keine Konten aus. Es verarbeitet nur Meldungen, die dein iPhone sowieso bekommt, und zwar dort.</p>
     </div>
     <div class="priv">
-      <div class="reveal"><span class="squircle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><h3>Kein Bank-Login</h3><p>Du gibst nirgends Zugangsdaten ein. Es gibt keine Verbindung zu deiner Bank.</p></div>
-      <div class="reveal"><span class="squircle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 18.5h4"/></svg></span><h3>Alles auf dem Gerät</h3><p>Auch das Erkennen von Betrag und Händler passiert direkt auf deinem iPhone.</p></div>
-      <div class="reveal"><span class="squircle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg></span><h3>Kein Tracking</h3><p>Keine Werbe-IDs, kein Verkauf von Daten. Export jederzeit als CSV.</p></div>
+      <div class="reveal"><span class="squircle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><h3>Null Bankzugang</h3><p>Kein E-Banking-Passwort, keine Verknüpfung, keine Vollmacht.</p></div>
+      <div class="reveal"><span class="squircle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10 18.5h4"/></svg></span><h3>Rechnet lokal</h3><p>Kategorien, Budgets und KI laufen auf deinem Gerät, nicht in einer Cloud.</p></div>
+      <div class="reveal"><span class="squircle"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M4 17V7m5 10V4m5 13v-6m5 6V9"/></svg></span><h3>Deine Daten, dein Export</h3><p>Alles jederzeit als CSV mitnehmen. Keine Werbung, kein Datenhandel.</p></div>
     </div>
   </div>
 </section>
 
-<!-- ===================== PREISE ===================== -->
 <section id="preise">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="eyebrow">Preise</div>
-      <h2 class="split">Sieben Tage gratis. <span class="accent">Dann fair.</span></h2>
-      <p>Probier alles aus. Wenn Summit nicht passt, kostet es dich nichts.</p>
+      <h2 class="split">7 Tage testen. <span class="accent">Dann entscheiden.</span></h2>
+      <p>Volle Funktionen ab dem ersten Tag. Passt es nicht, zahlst du nichts.</p>
     </div>
     <div class="plans">
-      <div class="plan reveal"><h3>Monatlich</h3><div class="price">3.90<small> CHF</small></div><div class="sub">pro Monat</div><ul><li>Alle Funktionen</li><li>Jederzeit kündbar</li></ul><a href="#warteliste" class="btn btn-ghost">Vormerken</a></div>
-      <div class="plan best reveal"><span class="save">Am beliebtesten · spare 38 %</span><h3>Jährlich</h3><div class="price">29<small> CHF</small></div><div class="sub">pro Jahr, also 2.42 im Monat</div><ul><li>Alle Funktionen</li><li>Apple Watch &amp; Widgets</li><li>Projekte &amp; Abos</li></ul><a href="#warteliste" class="btn btn-dark">Vormerken</a></div>
-      <div class="plan reveal"><h3>Einmalig</h3><div class="price">79<small> CHF</small></div><div class="sub">für immer</div><ul><li>Alle Funktionen</li><li>Kein Abo</li></ul><a href="#warteliste" class="btn btn-ghost">Vormerken</a></div>
+      <div class="plan reveal"><h3>Monatlich</h3><div class="price">3.90<small> CHF</small></div><div class="sub">pro Monat</div><ul><li>Alle Funktionen</li><li>Monatlich kündbar</li></ul><a href="#warteliste" class="btn btn-ghost">Vormerken</a></div>
+      <div class="plan best reveal"><span class="save">Empfohlen · 38 % günstiger</span><h3>Jährlich</h3><div class="price">29<small> CHF</small></div><div class="sub">pro Jahr, also 2.42 im Monat</div><ul><li>Alle Funktionen</li><li>Apple Watch &amp; Widgets</li><li>Reise-Modus &amp; Fixkosten</li></ul><a href="#warteliste" class="btn btn-dark">Vormerken</a></div>
+      <div class="plan reveal"><h3>Für immer</h3><div class="price">79<small> CHF</small></div><div class="sub">einmal bezahlen</div><ul><li>Alle Funktionen</li><li>Keine Verlängerung</li></ul><a href="#warteliste" class="btn btn-ghost">Vormerken</a></div>
     </div>
     <p class="fine">Geplante Preise zum Start. Beträge in Franken, inkl. MWST.</p>
   </div>
 </section>
 
-<!-- ===================== FAQ ===================== -->
 <section id="faq" style="padding-top:0">
   <div class="wrap">
-    <div class="sec-head reveal"><div class="eyebrow">Fragen</div><h2 class="split">Gut zu <span class="accent">wissen.</span></h2></div>
+    <div class="sec-head reveal"><div class="eyebrow">Fragen</div><h2 class="split">Kurz <span class="accent">erklärt.</span></h2></div>
     <div class="faq reveal">
-      <details><summary>Funktioniert das mit meiner Bank?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Für Kartenzahlungen hängt Summit an deiner Wallet, also an jeder Karte darin. Für TWINT und Online-Käufe reicht es, dass deine Bank-App dir Zahlungen per Mitteilung meldet. Summit liest Betrag und Händler direkt auf dem Gerät aus.</div></details>
-      <details><summary>Wie viel muss ich einrichten?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Ab iOS 27 fügst du einen fertigen Kurzbefehl hinzu und schaltest ihn ein. Auf älteren Versionen führt dich Summit Schritt für Schritt durch eine Automation, die du selbst anlegst.</div></details>
-      <details><summary>Sieht Summit meine Kontodaten?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Nein. Es gibt keine Verbindung zu deiner Bank. Summit kennt nur die Beträge, die ohnehin auf deinem iPhone auftauchen.</div></details>
-      <details><summary>Gibt es Summit für Android?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Ja, in Arbeit. Trag dich in die Warteliste ein, dann melden wir uns, sobald es losgeht.</div></details>
-      <details><summary>Gibt es Summit auf Französisch?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Oui. Summit startet auf Deutsch, Französisch und Englisch.</div></details>
+      <details><summary>Welche Banken werden unterstützt?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Grundsätzlich alle. Karten erfasst Summit über die Apple Wallet, unabhängig vom Herausgeber. TWINT und Online-Käufe kommen über die Push-Meldungen deiner Bank-App, die Summit mit KI auf dem Gerät ausliest. Eine Liste von Formaten pflegen wir dafür nicht.</div></details>
+      <details><summary>Wie lange dauert das Einrichten?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Mit iOS 27 etwa 15 Sekunden: Kurzbefehl hinzufügen und einschalten. Auf iOS 17 bis 26 legst du die Automation selbst an, Summit begleitet dich mit einer Video-Anleitung, die neben der Kurzbefehle-App mitläuft.</div></details>
+      <details><summary>Kann Summit auf mein Konto zugreifen?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Nein, technisch gar nicht. Summit hat weder deine Zugangsdaten noch eine Schnittstelle zur Bank. Es sieht nur Meldungen, die auf deinem iPhone eintreffen.</div></details>
+      <details><summary>Kommt eine Android-Version?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Ja, sie ist geplant. Wer auf der Warteliste steht, erfährt es zuerst.</div></details>
+      <details><summary>Gibt es Summit auch auf Französisch?<span class="plus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></summary><div class="ans">Oui. Zum Start gibt es Deutsch, Französisch und Englisch.</div></details>
     </div>
   </div>
 </section>
 </main>
 
-<!-- ===================== WARTELISTE ===================== -->
 <div class="final hero-bg" id="warteliste">
   <div class="frame">
     <h2 class="split reveal">Sei beim Start <span class="accent">dabei.</span></h2>
-    <p class="lead reveal">Trag dich ein. Du erfährst als Erstes, wenn Summit im App Store ist.</p>
+    <p class="lead reveal">Eine E-Mail, sobald Summit im App Store ist. Sonst nichts.</p>
     <form class="wl reveal" id="wl" novalidate>
-      <label for="email" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">E-Mail-Adresse</label>
+      <label for="email" class="sr">E-Mail-Adresse</label>
       <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="deine@email.ch" required>
       <button class="btn btn-dark" type="submit" id="wlBtn">Eintragen</button>
     </form>
@@ -611,48 +623,70 @@ footer nav a:hover{color:var(--ink);background:#fff}
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const sleep = ms => new Promise(r => setTimeout(r, ms));
-  const fmt = n => n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "'"); // Miller: 1'487.20 gechunkt
+  const fmt = n => n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, "'");
 
-  /* ---------- Daten der App-Vorschau ---------- */
+  /* ---------- Daten ---------- */
   const cats = [
-    { key:'food',  name:'Lebensmittel', color:'#3f9b2f', bg:'#e3f1dc', icon:'🛒', amt:612.30 },
-    { key:'out',   name:'Auswärts',     color:'#eaa53a', bg:'#fbefd9', icon:'🍝', amt:386.50 },
-    { key:'move',  name:'Transport',    color:'#2f8f7f', bg:'#dcefeb', icon:'🚆', amt:340.40 },
-    { key:'fun',   name:'Freizeit',     color:'#5aa9c9', bg:'#dfeef5', icon:'🎟️', amt:148.00 },
+    { key:'food', name:'Lebensmittel', amt:612.30 },
+    { key:'out',  name:'Auswärts',     amt:386.50 },
+    { key:'move', name:'Transport',    amt:340.40 },
+    { key:'fun',  name:'Freizeit',     amt:148.00 },
   ];
+  const byKey = k => cats.find(c=>c.key===k);
   const catList = document.getElementById('catList');
-  catList.innerHTML = cats.map(c => `<div class="cat-row" data-k="${c.key}"><span class="sw" style="background:${c.bg}">${c.icon}</span><span class="nm">${c.name}</span><span class="amt">${fmt(c.amt)}</span></div>`).join('');
+  catList.innerHTML = cats.map(c => `<div class="cat-row" data-k="${c.key}"><span>${c.name}</span><span class="amt">${fmt(c.amt)}</span></div>`).join('');
+  const total = () => cats.reduce((s,c)=>s+c.amt,0);
+  const OCT = 1690; // gleicher Stichtag im Oktober
 
-  /* Donut */
-  const donut = document.getElementById('donut');
-  const R = 46, C = 2 * Math.PI * R;
-  donut.innerHTML = `<circle cx="60" cy="60" r="${R}" stroke="#eef2ea"/>` + cats.map(c => `<circle data-k="${c.key}" cx="60" cy="60" r="${R}" stroke="${c.color}" stroke-dasharray="0 ${C}"/>`).join('');
-  function drawDonut(){
-    const total = cats.reduce((s,c)=>s+c.amt,0); let off = 0; const gap = 6;
-    cats.forEach(c => {
-      const len = c.amt/total*C;
-      const el = donut.querySelector(`circle[data-k="${c.key}"]`);
-      el.setAttribute('stroke-dasharray', `${Math.max(len-gap,0)} ${C}`);
-      el.setAttribute('stroke-dashoffset', -off);
-      off += len;
-    });
-    return total;
+  /* ---------- Linien-Chart (kumuliert) ---------- */
+  const daily = [62,18,95,40,120,33,0,210,75,48,130,22,160,90,55,329.2];
+  let cum = []; daily.reduce((s,v,i)=>(cum[i]=s+v), 0);
+  const W=260, H=104, DOM=18;
+  function pathFor(arr){
+    const max = Math.max(1600, arr[arr.length-1]*1.08);
+    const p = arr.map((v,i) => [ i/DOM*W, H-6 - v/max*(H-22) ]); let d = `M${p[0][0]},${p[0][1]}`;
+    for (let i=0;i<p.length-1;i++){ // Catmull-Rom → Bezier: weiche Kurve statt Ecken
+      const p0=p[i-1]||p[i], p1=p[i], p2=p[i+1], p3=p[i+2]||p2;
+      d += ` C${p1[0]+(p2[0]-p0[0])/6},${p1[1]+(p2[1]-p0[1])/6} ${p2[0]-(p3[0]-p1[0])/6},${p2[1]-(p3[1]-p1[1])/6} ${p2[0]},${p2[1]}`;
+    }
+    return { line:d, area:d+` L${p[p.length-1][0]},${H} L0,${H} Z`, last:p[p.length-1] };
   }
-  const totalEl = document.getElementById('total');
+  const axLine=document.getElementById('axLine'), axArea=document.getElementById('axArea'), axDot=document.getElementById('axDot'), axLbl=document.getElementById('axTodayLbl'), axChart=document.getElementById('axChart');
+  function renderChart(arr){
+    const r = pathFor(arr); axLine.setAttribute('d', r.line); axArea.setAttribute('d', r.area);
+    const sx = axChart.clientWidth/W, sy = axChart.clientHeight/H;
+    axDot.style.left = (r.last[0]*sx)+'px'; axDot.style.top = (r.last[1]*sy)+'px';
+    axLbl.style.left = (r.last[0]*sx)+'px'; axLbl.style.top = (r.last[1]*sy)+'px';
+  }
+  renderChart(cum);
+  if (!reduce) { // Linie zeichnet sich beim Laden
+    const len = axLine.getTotalLength();
+    axLine.animate([{strokeDasharray:`${len}`,strokeDashoffset:len},{strokeDasharray:`${len}`,strokeDashoffset:0}],{duration:1400,easing:'cubic-bezier(.65,0,.35,1)'});
+    axArea.animate([{opacity:0},{opacity:1}],{duration:900,delay:700,fill:'backwards'});
+    axDot.animate([{opacity:0,transform:'translate(-50%,-50%) scale(.3)'},{opacity:1,transform:'translate(-50%,-50%) scale(1.15)',offset:.7},{opacity:1,transform:'translate(-50%,-50%) scale(1)'}],{duration:500,delay:1250,fill:'backwards',easing:'ease-out'});
+  }
+  function tweenChart(from, to, ms=800){
+    if (reduce) { renderChart(to); return; }
+    const t0=performance.now();
+    const f = t => { const p=Math.min((t-t0)/ms,1), e=1-Math.pow(1-p,3); renderChart(from.map((v,i)=>v+(to[i]-v)*e)); if(p<1) requestAnimationFrame(f); };
+    requestAnimationFrame(f);
+  }
+
+  const totalEl = document.getElementById('total'), deltaEl = document.getElementById('delta');
   function countTo(el, from, to, ms=700){
     if (reduce) { el.textContent = fmt(to); return; }
     const t0 = performance.now();
     const step = t => { const p = Math.min((t-t0)/ms,1); const e = 1-Math.pow(1-p,3); el.textContent = fmt(from+(to-from)*e); if(p<1) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   }
-  setTimeout(drawDonut, 300);
+  const setDelta = () => { const d = Math.round((1 - total()/OCT)*100); deltaEl.textContent = `${d} % weniger als im Oktober`; };
 
-  /* ---------- Skalierung der Bühne (Mobile) ---------- */
+  /* ---------- Bühne skalieren ---------- */
   const wrap = document.getElementById('stageWrap');
-  const fit = () => { const s = Math.min(1, wrap.clientWidth / 560); wrap.style.setProperty('--s', s.toFixed(3)); };
+  const fit = () => { wrap.style.setProperty('--s', Math.min(1, wrap.clientWidth / 560).toFixed(3)); renderChart(cum); };
   fit(); addEventListener('resize', fit);
 
-  /* ---------- 3D-Neigung bei Mausbewegung (Solid drawing) ---------- */
+  /* ---------- 3D-Neigung ---------- */
   const heroEl = document.querySelector('.hero');
   const pA = document.getElementById('phoneA'), pB = document.getElementById('phoneB');
   if (!reduce && matchMedia('(pointer:fine)').matches) {
@@ -660,12 +694,12 @@ footer nav a:hover{color:var(--ink);background:#fff}
       const r = heroEl.getBoundingClientRect();
       const x = (e.clientX - r.left)/r.width - .5, y = (e.clientY - r.top)/r.height - .5;
       pA.style.transform = `perspective(1100px) rotateY(${x*-10}deg) rotateX(${y*6}deg) rotate(1.5deg)`;
-      pB.style.transform = `perspective(1100px) rotateY(${x*-14}deg) rotateX(${y*8}deg) rotate(-2deg) translateZ(30px)`;
+      pB.style.transform = `perspective(1100px) rotateY(${x*-14}deg) rotateX(${y*8}deg) rotate(-2.5deg) translateZ(30px)`;
     });
     heroEl.addEventListener('pointerleave', () => { pA.style.transform = ''; pB.style.transform = ''; });
   }
 
-  /* ---------- Rotierendes Akzentwort (Pose to pose) ---------- */
+  /* ---------- Akzentwort ---------- */
   const words = [...document.querySelectorAll('.rotator span')];
   const dots = [...document.querySelectorAll('.pager button')];
   let wi = 0, wTimer;
@@ -678,7 +712,7 @@ footer nav a:hover{color:var(--ink);background:#fff}
   dots.forEach((d,i)=>d.addEventListener('click',()=>{ if(i!==wi) showWord(i); autoWords(); }));
   autoWords();
 
-  /* ---------- Funken (Secondary action) ---------- */
+  /* ---------- Funken ---------- */
   function sparkle(host, n=10){
     if (reduce) return;
     const colors = ['#3f9b2f','#eaa53a','#7cc35f','#2f8f7f'];
@@ -691,96 +725,102 @@ footer nav a:hover{color:var(--ink);background:#fff}
     }
   }
 
-  /* ---------- Flug auf einem Bogen (Moving in arcs) ---------- */
+  /* ---------- Flug auf einem Bogen ---------- */
   function flyArc(fromEl, toEl, label){
     return new Promise(res => {
       const a = fromEl.getBoundingClientRect(), b = toEl.getBoundingClientRect();
       const f = document.createElement('div'); f.className='flyer'; f.textContent=label; document.body.appendChild(f);
       const fw = f.offsetWidth, fh = f.offsetHeight;
       const x0=a.left+a.width/2-fw/2, y0=a.top+a.height/2-fh/2, x2=b.left+b.width-fw-10, y2=b.top+b.height/2-fh/2;
-      const x1=(x0+x2)/2, y1=Math.min(y0,y2)-140; // Kontrollpunkt oberhalb: echter Bogen
+      const x1=(x0+x2)/2, y1=Math.min(y0,y2)-140;
       const kf=[]; for(let i=0;i<=16;i++){ const t=i/16, u=1-t;
         const x=u*u*x0+2*u*t*x1+t*t*x2, y=u*u*y0+2*u*t*y1+t*t*y2;
-        const sc = i===0?.6: i===16?.85: 1 + Math.sin(t*Math.PI)*.12; // Squash & stretch unterwegs
+        const sc = i===0?.6: i===16?.85: 1 + Math.sin(t*Math.PI)*.12;
         kf.push({transform:`translate(${x}px,${y}px) scale(${sc})`, opacity: i===16?0:1}); }
       f.style.left='0'; f.style.top='0';
       f.animate(kf,{duration:900,easing:'cubic-bezier(.65,0,.35,1)'}).onfinish=()=>{f.remove();res();};
     });
   }
 
-  /* ---------- Hero-Loop: Mitteilung → Tipp → Bogen → Zahl wächst ---------- */
-  const heroNotif = document.getElementById('heroNotif'), heroAmount = document.getElementById('heroAmount'), heroChips = document.getElementById('heroChips');
+  /* ---------- Buchen: Zeile, Gesamt, Chart (Follow-through) ---------- */
+  function book(key, amt){
+    const c = byKey(key), row = catList.querySelector(`[data-k="${key}"]`);
+    const before = c.amt, tBefore = total(); c.amt += amt;
+    row.classList.add('hit'); countTo(row.querySelector('.amt'), before, c.amt);
+    countTo(totalEl, tBefore, total(), 900); setDelta();
+    const next = cum.slice(); next[next.length-1] += amt; tweenChart(cum, next); cum = next;
+    setTimeout(()=>row.classList.remove('hit'), 520);
+  }
+
+  /* ---------- Hero-Loop ---------- */
+  const heroNotif = document.getElementById('heroNotif'), heroAmount = document.getElementById('heroAmount'), heroSugg = document.getElementById('heroSugg'), heroOk = document.getElementById('heroOk');
   const feed = [
-    { merchant:'Migros', amt:24.80, pick:'food', offer:['food','out','fun'] },
-    { merchant:'SBB Mobile', amt:8.80, pick:'move', offer:['move','fun','out'] },
-    { merchant:'Café Henrici', amt:13.50, pick:'out', offer:['out','food','fun'] },
+    { merchant:'Migros', amt:24.80, pick:'food' },
+    { merchant:'SBB Mobile', amt:8.80, pick:'move' },
+    { merchant:'Café Henrici', amt:13.50, pick:'out' },
   ];
-  const byKey = k => cats.find(c=>c.key===k);
   let heroVisible = true;
   new IntersectionObserver(es=>{ heroVisible = es[0].isIntersecting; }).observe(heroEl);
-
   async function heroLoop(){
-    drawDonut();
-    if (reduce) { heroNotif.style.opacity=1; heroNotif.style.transform='none'; renderChips(heroChips, feed[0].offer); return; }
-    let i = 0;
-    await sleep(900);
+    if (reduce) { heroNotif.style.opacity=1; heroNotif.style.transform='none'; return; }
+    let i = 0; await sleep(1900);
     while (true){
       while(!heroVisible || document.hidden) await sleep(400);
       const it = feed[i%feed.length]; i++;
       heroAmount.textContent = `CHF ${fmt(it.amt)} · ${it.merchant}`;
-      renderChips(heroChips, it.offer);
-      // Anticipation: kurz nach oben ausholen, dann mit Überschwingen herein
+      heroSugg.textContent = byKey(it.pick).name;
+      heroOk.classList.remove('done'); heroOk.textContent='Passt';
       await heroNotif.animate([
         {opacity:0, transform:'translateY(-30px) scale(.96)'},
         {opacity:1, transform:'translateY(6px) scale(1.01)', offset:.7},
         {opacity:1, transform:'translateY(0) scale(1)'}],{duration:520,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'}).finished;
-      await sleep(1100);
-      const chip = heroChips.querySelector(`[data-k="${it.pick}"]`);
-      chip.classList.add('press'); await sleep(140); chip.classList.remove('press');
-      chip.classList.add('done'); chip.textContent='✓'; sparkle(chip);
-      await sleep(260);
-      const row = catList.querySelector(`[data-k="${it.pick}"]`);
-      await flyArc(chip, row, '+' + fmt(it.amt));
-      // Follow-through: Zeile federt nach, Zahl und Donut ziehen hinterher
-      const c = byKey(it.pick); const before = c.amt; c.amt += it.amt;
-      row.classList.add('hit'); countTo(row.querySelector('.amt'), before, c.amt);
-      const tBefore = cats.reduce((s,x)=>s+x.amt,0) - it.amt; const tAfter = drawDonut(); countTo(totalEl, tBefore, tAfter, 900);
+      await sleep(1200);
+      heroOk.classList.add('press'); await sleep(140); heroOk.classList.remove('press');
+      heroOk.classList.add('done'); heroOk.textContent='✓'; sparkle(heroOk);
+      await sleep(240);
+      await flyArc(heroOk, catList.querySelector(`[data-k="${it.pick}"]`), '+' + fmt(it.amt));
+      book(it.pick, it.amt);
       heroNotif.animate([{opacity:1, transform:'translateY(0)'},{opacity:0, transform:'translateY(-24px) scale(.97)'}],{duration:240,easing:'cubic-bezier(.65,0,.35,1)',fill:'forwards'});
-      await sleep(520); row.classList.remove('hit');
-      await sleep(1500);
+      await sleep(2000);
     }
-  }
-  function renderChips(host, keys, interactive=false){
-    host.innerHTML = keys.map(k=>`<button type="button" class="chip" data-k="${k}" ${interactive?'':'tabindex="-1" aria-hidden="true"'}>${byKey(k).name}</button>`).join('');
   }
   heroLoop();
 
-  /* ---------- Interaktive Demo (Exaggerated feedback, Doherty <100 ms) ---------- */
+  /* ---------- Interaktive Demo ---------- */
   const tryFeed = [
-    { merchant:'Café Bebek', amt:18.50, offer:['out','food','fun'] },
-    { merchant:'Coop City', amt:42.10, offer:['food','out','fun'] },
-    { merchant:'Kino Riffraff', amt:21.00, offer:['fun','out','move'] },
-    { merchant:'ZVV Ticket', amt:4.40, offer:['move','fun','food'] },
+    { merchant:'Café Bebek', amt:18.50, sugg:'out', alts:['food','fun','move'] },
+    { merchant:'Coop City', amt:42.10, sugg:'food', alts:['out','fun','move'] },
+    { merchant:'Kino Riffraff', amt:21.00, sugg:'fun', alts:['out','food','move'] },
+    { merchant:'ZVV Ticket', amt:4.40, sugg:'move', alts:['fun','food','out'] },
   ];
-  let ti = 0;
-  const tryChips = document.getElementById('tryChips'), tryAmount = document.getElementById('tryAmount'), tryResult = document.getElementById('tryResult');
+  let ti = 0, busy = false;
+  const $ = id => document.getElementById(id);
+  const tryNotif=$('tryNotif'), tryAmount=$('tryAmount'), trySugg=$('trySugg'), tryActs=$('tryActs'), tryOk=$('tryOk'), tryAlt=$('tryAlt'), tryAlts=$('tryAlts'), tryResult=$('tryResult');
   function loadTry(){
     const it = tryFeed[ti%tryFeed.length];
     tryAmount.textContent = `CHF ${fmt(it.amt)} · ${it.merchant}`;
-    renderChips(tryChips, it.offer, true);
+    trySugg.textContent = byKey(it.sugg).name;
+    tryOk.className='act ok'; tryOk.textContent='Passt'; tryActs.style.display='';
+    tryAlts.classList.remove('show');
+    tryAlts.innerHTML = it.alts.map(k=>`<button type="button" data-k="${k}">${byKey(k).name}</button>`).join('');
+    busy = false;
   }
-  tryChips.addEventListener('click', async e => {
-    const b = e.target.closest('.chip'); if (!b || b.classList.contains('done')) return;
-    tryChips.querySelectorAll('.chip').forEach(c=>c.disabled=true);
-    b.classList.add('done'); b.textContent = '✓ ' + byKey(b.dataset.k).name; sparkle(b, 14);
+  async function finishTry(btn, key){
+    busy = true;
+    btn.classList.add('done'); btn.textContent = '✓ ' + byKey(key).name; sparkle(btn, 14);
     const it = tryFeed[ti%tryFeed.length];
-    tryResult.textContent = `Gemerkt. ${it.merchant} ist ab jetzt ${byKey(b.dataset.k).name}.`; tryResult.classList.add('show');
-    await sleep(1600); tryResult.classList.remove('show'); ti++;
-    const n = document.querySelector('#try .notif');
-    if (!reduce) await n.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateY(-14px) scale(.97)'}],{duration:220,easing:'cubic-bezier(.65,0,.35,1)'}).finished;
+    tryResult.textContent = `Gespeichert. ${it.merchant} läuft ab jetzt unter ${byKey(key).name}.`; tryResult.classList.add('show');
+    await sleep(1700); tryResult.classList.remove('show'); ti++;
+    if (!reduce) await tryNotif.animate([{opacity:1,transform:'none'},{opacity:0,transform:'translateY(-14px) scale(.97)'}],{duration:220,easing:'cubic-bezier(.65,0,.35,1)'}).finished;
     loadTry();
-    if (!reduce) n.animate([{opacity:0,transform:'translateY(-18px) scale(.97)'},{opacity:1,transform:'translateY(3px)',offset:.7},{opacity:1,transform:'none'}],{duration:460,easing:'cubic-bezier(.22,1,.36,1)'});
+    if (!reduce) tryNotif.animate([{opacity:0,transform:'translateY(-18px) scale(.97)'},{opacity:1,transform:'translateY(3px)',offset:.7},{opacity:1,transform:'none'}],{duration:460,easing:'cubic-bezier(.22,1,.36,1)'});
+  }
+  tryOk.addEventListener('click', () => { if (!busy) finishTry(tryOk, tryFeed[ti%tryFeed.length].sugg); });
+  tryAlt.addEventListener('click', () => { // Staging: erst jetzt erscheinen die Alternativen
+    if (busy) return; tryActs.style.display='none'; tryAlts.classList.add('show');
+    if (!reduce) [...tryAlts.children].forEach((b,i)=>b.animate([{opacity:0,transform:'translateY(8px) scale(.94)'},{opacity:1,transform:'none'}],{duration:260,delay:i*50,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'}));
   });
+  tryAlts.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !busy) finishTry(b, b.dataset.k); });
   loadTry();
 
   /* ---------- Überschriften Wort für Wort ---------- */
@@ -800,34 +840,33 @@ footer nav a:hover{color:var(--ink);background:#fff}
     walk(h);
   });
 
-  /* ---------- Reveal beim Scrollen: nur einmal (Frequency of use) ---------- */
+  /* ---------- Reveal: nur einmal ---------- */
   const io = new IntersectionObserver(es => es.forEach(e => {
     if (!e.isIntersecting) return;
     e.target.classList.add('in');
     e.target.querySelectorAll('h2.split').forEach(h=>h.classList.add('in'));
-    if (e.target.matches('h2.split')) e.target.classList.add('in');
     io.unobserve(e.target);
   }), { threshold:.18, rootMargin:'0px 0px -40px 0px' });
   document.querySelectorAll('.reveal, h2.split').forEach(el => io.observe(el));
 
-  /* ---------- Schritte + 15-Sekunden-Ring (Staging: ein Schritt nach dem anderen) ---------- */
+  /* ---------- Schritte + Ring ---------- */
   const steps = [...document.querySelectorAll('#stepList .step')];
   const ringBar = document.getElementById('ringBar'), ringVal = document.getElementById('ringVal');
   let ringDone = false;
-  new IntersectionObserver(async (es, obs) => {
+  new IntersectionObserver((es, obs) => {
     if (!es[0].isIntersecting || ringDone) return; ringDone = true; obs.disconnect();
     if (reduce) { ringVal.textContent='15'; ringBar.style.strokeDashoffset=0; return; }
-    const total = 1800, t0 = performance.now();
+    const dur = 1800, t0 = performance.now();
     const tick = t => {
-      const p = Math.min((t-t0)/total,1), e = p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2; // slow in & slow out
+      const p = Math.min((t-t0)/dur,1), e = p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
       ringBar.style.strokeDashoffset = 326.7*(1-e); ringVal.textContent = Math.round(15*e);
       const idx = Math.min(2, Math.floor(e*3)); steps.forEach((s,i)=>s.classList.toggle('active', i===idx));
-      if (p<1) requestAnimationFrame(tick); else { steps.forEach(s=>s.classList.remove('active')); steps[2].classList.add('active'); }
+      if (p<1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
   }, { threshold:.5 }).observe(document.getElementById('timerCard'));
 
-  /* ---------- 3D-Neigung der Bento-Kacheln ---------- */
+  /* ---------- 3D-Kacheln ---------- */
   if (!reduce && matchMedia('(pointer:fine)').matches) {
     document.querySelectorAll('.tile').forEach(t => {
       t.addEventListener('pointermove', e => { const r=t.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
@@ -836,7 +875,7 @@ footer nav a:hover{color:var(--ink);background:#fff}
     });
   }
 
-  /* ---------- Warteliste. Postel: grosszügig annehmen, sauber speichern ---------- */
+  /* ---------- Warteliste ---------- */
   const form = document.getElementById('wl'), email = document.getElementById('email'), msg = document.getElementById('wlMsg'), btn = document.getElementById('wlBtn');
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -845,9 +884,8 @@ footer nav a:hover{color:var(--ink);background:#fff}
     form.classList.remove('err'); void form.offsetWidth;
     if (!ok) { form.classList.add('err'); msg.className='wl-msg bad'; msg.textContent = clean ? 'Da fehlt noch etwas, z. B. name@email.ch' : 'Gib deine E-Mail-Adresse ein.'; email.focus(); return; }
     email.value = clean;
-    // Sofortige Rückmeldung (Doherty), Speichern läuft danach
     btn.classList.add('sent'); btn.textContent = '✓ Eingetragen'; sparkle(btn, 14);
-    msg.className='wl-msg good'; msg.textContent = 'Danke! Wir melden uns, sobald Summit im App Store ist.';
+    msg.className='wl-msg good'; msg.textContent = 'Danke! Du hörst von uns, sobald Summit live ist.';
     // TODO: an einen echten Dienst anbinden (z. B. Formspree, Tally, Supabase). Bis dahin nur lokal:
     try { const l = JSON.parse(localStorage.getItem('summit-wl')||'[]'); l.push({email:clean, t:Date.now()}); localStorage.setItem('summit-wl', JSON.stringify(l)); } catch(_) {}
   });
